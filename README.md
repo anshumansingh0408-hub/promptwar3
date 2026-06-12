@@ -1,4 +1,4 @@
-# CarbonWise 🌍
+# CarbonWise 
 
 CarbonWise is an intelligent, data-driven Carbon Footprint Awareness Platform designed to help individuals monitor their environmental impact, track daily activities, and adopt eco-friendly habits. 
 
@@ -9,10 +9,10 @@ Powered by **Google Gemini** and built as an autonomous AI agent, CarbonWise doe
 ## 🚀 Key Features
 
 * **Smart Carbon Calculator:** Seamlessly estimates carbon footprints across key daily domains:
-    * 🚗 **Transport:** Analyzes commuting habits (e.g., petrol vehicle mileage vs. public transit).
-    * ⚡ **Energy:** Tracks monthly electricity utilization (kWh) and targets phantom loads.
-    * 🍽 **Diet:** Evaluates dietary choices (e.g., vegetarian optimization) and calculates food miles.
-    * ♻️ **Waste:** Monitors weekly non-recycled waste generation and highlights diversion metrics.
+    *  **Transport:** Analyzes commuting habits (e.g., petrol vehicle mileage vs. public transit).
+    * **Energy:** Tracks monthly electricity utilization (kWh) and targets phantom loads.
+    *  **Diet:** Evaluates dietary choices (e.g., vegetarian optimization) and calculates food miles.
+    *  **Waste:** Monitors weekly non-recycled waste generation and highlights diversion metrics.
 * **Dynamic Visual Dashboard:** Features interactive donut charts and dynamic real-time progress bars to immediately expose major emission drivers.
 * **Comparative Benchmarking:** Maps user scores against regional and global net-zero targets to provide immediate environmental context.
 * **Behavioral Gamification (Pledge System):** Allows users to commit to specific lifestyle changes (e.g., *“Set AC to 24°C”*) and displays running aggregations of total projected $CO_2$ savings.
@@ -20,7 +20,7 @@ Powered by **Google Gemini** and built as an autonomous AI agent, CarbonWise doe
 
 ---
 
-## 🛠️ Architecture & Google Cloud Stack
+##  Architecture & Google Cloud Stack
 
 CarbonWise is engineered using enterprise-grade, serverless Google Cloud technologies to ensure rapid deployment, auto-scaling, and secure data handling:
 
@@ -33,7 +33,7 @@ CarbonWise is engineered using enterprise-grade, serverless Google Cloud technol
 
 ---
 
-## ⚙️ Local Development Setup
+##  Local Development Setup
 
 ### Prerequisites
 * Node.js (v18+) or Python (depending on your specific backend flavor)
