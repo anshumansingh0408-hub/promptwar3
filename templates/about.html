@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}About CarbonWise - Personal Carbon Footprint Assessment{% endblock %}
+
+{% block content %}
+<section class="max-w-4xl mx-auto space-y-12 animate-fade-up">
+    
+    <!-- Hero Section -->
+    <div class="relative rounded-3xl overflow-hidden border border-mint/20 shadow-sm">
+        <div class="absolute inset-0 bg-gradient-to-r from-mint/20 via-paper to-white opacity-95"></div>
+        <div class="absolute -right-12 -bottom-12 w-64 h-64 bg-mint/10 rounded-full blur-3xl"></div>
+        <div class="absolute -left-12 -top-12 w-64 h-64 bg-amber/5 rounded-full blur-3xl"></div>
+        
+        <div class="relative px-6 py-12 md:px-12 md:py-16 text-center space-y-4">
+            <span class="px-3 py-1 bg-mint/30 text-forest border border-mint/40 text-xxs font-extrabold uppercase tracking-widest rounded-full inline-block">
+                Our Mission & Technology
+            </span>
+            <h1 class="font-display font-extrabold text-3xl md:text-5xl text-forest tracking-tight">
+                About <span class="bg-gradient-to-r from-forest to-leaf bg-clip-text text-transparent">CarbonWise</span>
+            </h1>
+            <p class="text-sm md:text-base text-leaf font-semibold max-w-2xl mx-auto leading-relaxed">
+                Empowering individuals with deterministic carbon logic and state-of-the-art AI recommendations to create a sustainable tomorrow.
+            </p>
+        </div>
+    </div>
+
+    <!-- 1. What is CarbonWise? -->
+    <article class="premium-card p-6 md:p-8 space-y-3" aria-labelledby="section-what-title">
+        <h2 id="section-what-title" class="font-display font-extrabold text-lg md:text-xl text-forest flex items-center gap-2">
+            <span class="p-1 bg-mint/20 rounded text-base">🌍</span> 1. What is CarbonWise?
+        </h2>
+        <div class="text-xs md:text-sm font-semibold text-leaf leading-relaxed space-y-2.5">
+            <p class="font-medium text-gray-600">
+                CarbonWise is a climate-tech web application that calculates household monthly carbon footprint emissions and delivers personalized conversational green living advice through a context-aware AI chat assistant.
+            </p>
+            <p class="font-medium text-gray-600">
+                Our mission is to democratize carbon accounting, translating raw, confusing ecological data into simple, actionable habits. By combining a deterministic calculation engine with a state-of-the-art Large Language Model, we provide users with immediate, localized insights tailored specifically to their household habits.
+            </p>
+        </div>
+    </article>
+
+    <!-- 2. How We Calculate -->
+    <article class="premium-card p-6 md:p-8 space-y-3" aria-labelledby="section-calc-title">
+        <h2 id="section-calc-title" class="font-display font-extrabold text-lg md:text-xl text-forest flex items-center gap-2">
+            <span class="p-1 bg-mint/20 rounded text-base">🧮</span> 2. How We Calculate
+        </h2>
+        <div class="text-xs md:text-sm font-semibold text-leaf leading-relaxed space-y-3">
+            <p class="font-medium text-gray-600">
+                CarbonWise employs a deterministic calculation engine based on fixed emission coefficients. We evaluate four core categories of household emissions:
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                <div class="bg-paper/50 p-4 rounded-xl border border-mint/10 space-y-1">
+                    <span class="text-xs font-extrabold text-forest block">🚗 Transport Emissions</span>
+                    <p class="text-xxs font-medium text-gray-600 leading-normal">
+                        Calculated using mode-specific coefficients (e.g., petrol car, diesel car, electric scooter, public bus, metro) multiplied by daily distance travelled and scaled to monthly values.
+                    </p>
+                </div>
+                <div class="bg-paper/50 p-4 rounded-xl border border-mint/10 space-y-1">
+                    <span class="text-xs font-extrabold text-forest block">⚡ Electricity Emissions</span>
+                    <p class="text-xxs font-medium text-gray-600 leading-normal">
+                        Evaluated based on consumed electricity units (kWh/month) multiplied by national grid emission factors.
+                    </p>
+                </div>
+                <div class="bg-paper/50 p-4 rounded-xl border border-mint/10 space-y-1">
+                    <span class="text-xs font-extrabold text-forest block">🍽 Diet Lifecycle</span>
+                    <p class="text-xxs font-medium text-gray-600 leading-normal">
+                        Evaluated using average lifecycle emissions associated with dietary categories (Vegan, Vegetarian, or Non-Vegetarian).
+                    </p>
+                </div>
+                <div class="bg-paper/50 p-4 rounded-xl border border-mint/10 space-y-1">
+                    <span class="text-xs font-extrabold text-forest block">♻️ Waste Decays</span>
+                    <p class="text-xxs font-medium text-gray-600 leading-normal">
+                        Calculated using weekly non-recycled landfill waste generation values and typical municipal solid waste decay factors.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <!-- 3. Tech Stack -->
+    <article class="premium-card p-6 md:p-8 space-y-4" aria-labelledby="section-tech-title">
+        <h2 id="section-tech-title" class="font-display font-extrabold text-lg md:text-xl text-forest flex items-center gap-2">
+            <span class="p-1 bg-mint/20 rounded text-base">💻</span> 3. Technology Stack
+        </h2>
+        <p class="text-xs md:text-sm font-semibold text-gray-600 leading-relaxed">
+            CarbonWise is built using modern, highly optimized open-source web technologies:
+        </p>
+        
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 pt-1">
+            <!-- Flask -->
+            <div class="premium-card p-4 flex flex-col items-center text-center justify-between gap-2 hover:-translate-y-0.5 hover:border-mint/60 transition-all bg-white border border-gray-150">
+                <span class="text-3xl">🐍</span>
+                <div>
+                    <span class="font-display font-extrabold text-xs text-forest block">Python Flask</span>
+                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-wider block mt-0.5">Backend Core</span>
+                </div>
+            </div>
+            <!-- Gemini -->
+            <div class="premium-card p-4 flex flex-col items-center text-center justify-between gap-2 hover:-translate-y-0.5 hover:border-mint/60 transition-all bg-white border border-gray-150">
+                <span class="text-3xl">♊</span>
+                <div>
+                    <span class="font-display font-extrabold text-xs text-forest block">Gemini 1.5</span>
+                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-wider block mt-0.5">AI Insights</span>
+                </div>
+            </div>
+            <!-- Tailwind -->
+            <div class="premium-card p-4 flex flex-col items-center text-center justify-between gap-2 hover:-translate-y-0.5 hover:border-mint/60 transition-all bg-white border border-gray-150">
+                <span class="text-3xl">🎨</span>
+                <div>
+                    <span class="font-display font-extrabold text-xs text-forest block">Tailwind CSS</span>
+                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-wider block mt-0.5">Styling & UI</span>
+                </div>
+            </div>
+            <!-- Chart.js -->
+            <div class="premium-card p-4 flex flex-col items-center text-center justify-between gap-2 hover:-translate-y-0.5 hover:border-mint/60 transition-all bg-white border border-gray-150">
+                <span class="text-3xl">📊</span>
+                <div>
+                    <span class="font-display font-extrabold text-xs text-forest block">Chart.js</span>
+                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-wider block mt-0.5">Visuals</span>
+                </div>
+            </div>
+            <!-- Docker -->
+            <div class="premium-card p-4 flex flex-col items-center text-center justify-between gap-2 hover:-translate-y-0.5 hover:border-mint/60 transition-all bg-white border border-gray-150">
+                <span class="text-3xl">🐳</span>
+                <div>
+                    <span class="font-display font-extrabold text-xs text-forest block">Docker</span>
+                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-wider block mt-0.5">Deployment</span>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <!-- 4. Data Sources -->
+    <article class="premium-card p-6 md:p-8 space-y-4" aria-labelledby="section-data-title">
+        <h2 id="section-data-title" class="font-display font-extrabold text-lg md:text-xl text-forest flex items-center gap-2">
+            <span class="p-1 bg-mint/20 rounded text-base">📚</span> 4. Primary Data Sources
+        </h2>
+        <p class="text-xs md:text-sm font-semibold text-gray-600 leading-relaxed">
+            To guarantee scientific accuracy, our calculation coefficients are sourced from standard global and national climate databases:
+        </p>
+        
+        <div class="flex flex-wrap gap-3 pt-1">
+            <span class="flex items-center gap-1.5 px-3 py-1.5 bg-paper border border-mint/20 text-forest text-xs font-bold rounded-full shadow-sm">
+                <span class="text-emerald-500 text-sm font-extrabold">✔</span> IPCC AR6 Reports
+            </span>
+            <span class="flex items-center gap-1.5 px-3 py-1.5 bg-paper border border-mint/20 text-forest text-xs font-bold rounded-full shadow-sm">
+                <span class="text-emerald-500 text-sm font-extrabold">✔</span> CEA India Grid
+            </span>
+            <span class="flex items-center gap-1.5 px-3 py-1.5 bg-paper border border-mint/20 text-forest text-xs font-bold rounded-full shadow-sm">
+                <span class="text-emerald-500 text-sm font-extrabold">✔</span> World Health Org (WHO)
+            </span>
+            <span class="flex items-center gap-1.5 px-3 py-1.5 bg-paper border border-mint/20 text-forest text-xs font-bold rounded-full shadow-sm">
+                <span class="text-emerald-500 text-sm font-extrabold">✔</span> UNEP Guidelines
+            </span>
+        </div>
+    </article>
+
+    <!-- 5. Disclaimer -->
+    <article class="bg-amber/10 border border-amber/30 rounded-2xl p-6 md:p-8 shadow-sm space-y-2" aria-labelledby="section-disclaimer-title">
+        <h2 id="section-disclaimer-title" class="font-display font-extrabold text-lg text-earth flex items-center gap-2">
+            <span>⚠️</span> Disclaimer
+        </h2>
+        <p class="text-xs md:text-sm font-semibold text-earth leading-relaxed font-medium">
+            Calculations provided by CarbonWise represent estimates of greenhouse gas emissions based on average regional and global coefficients. Actual personal emissions can vary depending on specific vehicle models, local power utility configurations, solar installations, and individual behavior. Please consult certified energy auditors or professional sustainability experts for precise audit calculations.
+        </p>
+    </article>
+
+</section>
+{% endblock %}

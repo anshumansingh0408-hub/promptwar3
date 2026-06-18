@@ -1,0 +1,552 @@
+{% extends "base.html" %}
+
+{% block title %}How Do You Compare? 📊 - CarbonWise{% endblock %}
+
+{% block extra_head %}
+<!-- Load Chart.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<section class="max-w-6xl mx-auto space-y-12 animate-fade-up">
+    
+    <!-- Title & Overview -->
+    <div class="text-center space-y-3">
+        <span class="px-3 py-1 bg-mint/30 text-forest border border-mint/40 text-xxs font-extrabold uppercase tracking-widest rounded-full inline-block">
+            Global Benchmarks
+        </span>
+        <h1 class="font-display font-extrabold text-3xl md:text-5xl text-forest tracking-tight">
+            Emission Comparisons 📊
+        </h1>
+        <p class="text-sm md:text-base text-leaf font-semibold max-w-2xl mx-auto leading-relaxed">
+            See how your emissions stack up against global averages, national benchmarks, and everyday human activities.
+        </p>
+    </div>
+
+    <!-- Your Score vs India Average (sessionStorage / localStorage banner) -->
+    <div id="comparison-banner" class="premium-card p-6 border border-mint/30 shadow-md text-center max-w-4xl mx-auto relative overflow-hidden">
+        <div class="absolute -top-12 -right-12 w-36 h-36 bg-mint/10 rounded-full blur-2xl"></div>
+        <div id="banner-loading" class="text-sm font-semibold text-leaf animate-pulse">Checking your calculator footprint...</div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4">
+        
+        <!-- Chart 1: Average Monthly CO2 by Country -->
+        <article class="premium-card p-6 flex flex-col justify-between gap-4" aria-labelledby="chart-country-title">
+            <div class="space-y-2">
+                <h2 id="chart-country-title" class="font-display font-extrabold text-lg text-forest">Monthly CO2 per Capita by Country</h2>
+                <p class="text-xxs text-gray-500 font-semibold leading-normal">
+                    Comparing typical individual footprints worldwide. The red dashed line denotes the target required to align with international agreements.
+                </p>
+            </div>
+            <div class="relative w-full h-[280px] md:h-[320px]">
+                <canvas id="chart-country"></canvas>
+            </div>
+        </article>
+
+        <!-- Chart 2: India Emission Sources Breakdown -->
+        <article class="premium-card p-6 flex flex-col justify-between gap-4" aria-labelledby="chart-sources-title">
+            <div class="space-y-2">
+                <h2 id="chart-sources-title" class="font-display font-extrabold text-lg text-forest">Indian Average vs. Your Footprint (kg CO₂ / month)</h2>
+                <p class="text-xxs text-gray-500 font-semibold leading-normal">
+                    National averages across key source sectors. If you have run a calculation, your personal footprint will overlay for direct comparison.
+                </p>
+            </div>
+            <div class="relative w-full h-[280px] md:h-[320px]">
+                <canvas id="chart-sources"></canvas>
+            </div>
+        </article>
+
+        <!-- Chart 3: Activity Comparison (Full width on grid) -->
+        <article class="premium-card p-6 lg:col-span-2 flex flex-col justify-between gap-4" aria-labelledby="chart-activities-title">
+            <div class="space-y-2">
+                <h2 id="chart-activities-title" class="font-display font-extrabold text-lg text-forest">High-Carbon Activities vs. Reduction Action Impact (kg CO₂)</h2>
+                <p class="text-xxs text-gray-500 font-semibold leading-normal">
+                    Putting carbon metrics in perspective: comparing common carbon-intensive events against potential monthly mitigation actions.
+                </p>
+            </div>
+            <div class="relative w-full h-[280px] md:h-[340px]">
+                <canvas id="chart-activities"></canvas>
+            </div>
+        </article>
+
+    </div>
+
+    <!-- 4th Section: What If Everyone Did This? -->
+    <article class="space-y-6" aria-labelledby="whatif-title">
+        <h2 id="whatif-title" class="font-display font-extrabold text-2xl text-forest text-center">
+            What If Everyone Did This? 💡
+        </h2>
+        <p class="text-center text-xs md:text-sm font-semibold text-leaf max-w-xl mx-auto leading-normal">
+            Collective action scales emissions mitigation. Here is the massive monthly carbon savings impact if 1 million citizens adopt green choices:
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-2">
+            
+            <!-- Card 1 -->
+            <div class="premium-card p-6 hover:-translate-y-1 hover:border-mint/60 transition-all duration-300 space-y-4 relative overflow-hidden flex flex-col justify-between">
+                <div class="space-y-2">
+                    <div class="flex justify-between items-start">
+                        <span class="text-3xl" aria-hidden="true">🚇</span>
+                        <span class="px-2 py-0.5 bg-blue-50 text-blue-800 border border-blue-100 text-[10px] font-extrabold uppercase rounded-full">Transport</span>
+                    </div>
+                    <p class="text-3xl font-extrabold font-display text-forest"><span class="animate-counter font-display" data-target="57600">0</span> <span class="text-xs font-semibold">t/mo</span></p>
+                    <p class="text-xs font-bold text-leaf leading-snug">If 1 million Indians switched to metro transit daily.</p>
+                </div>
+                <div class="pt-2 border-t border-gray-100 flex justify-between items-center text-xxs font-bold text-gray-500">
+                    <span>Active participants:</span>
+                    <span class="text-forest font-extrabold">245,120 joined</span>
+                </div>
+            </div>
+            
+            <!-- Card 2 -->
+            <div class="premium-card p-6 hover:-translate-y-1 hover:border-mint/60 transition-all duration-300 space-y-4 relative overflow-hidden flex flex-col justify-between">
+                <div class="space-y-2">
+                    <div class="flex justify-between items-start">
+                        <span class="text-3xl" aria-hidden="true">🌱</span>
+                        <span class="px-2 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-100 text-[10px] font-extrabold uppercase rounded-full">Diet</span>
+                    </div>
+                    <p class="text-3xl font-extrabold font-display text-forest"><span class="animate-counter font-display" data-target="48000">0</span> <span class="text-xs font-semibold">t/mo</span></p>
+                    <p class="text-xs font-bold text-leaf leading-snug">If 1 million Indians adopted a vegetarian diet.</p>
+                </div>
+                <div class="pt-2 border-t border-gray-100 flex justify-between items-center text-xxs font-bold text-gray-500">
+                    <span>Active participants:</span>
+                    <span class="text-forest font-extrabold">184,850 joined</span>
+                </div>
+            </div>
+            
+            <!-- Card 3 -->
+            <div class="premium-card p-6 hover:-translate-y-1 hover:border-mint/60 transition-all duration-300 space-y-4 relative overflow-hidden flex flex-col justify-between">
+                <div class="space-y-2">
+                    <div class="flex justify-between items-start">
+                        <span class="text-3xl" aria-hidden="true">💡</span>
+                        <span class="px-2 py-0.5 bg-amber-50 text-amber-800 border border-amber-100 text-[10px] font-extrabold uppercase rounded-full">Energy</span>
+                    </div>
+                    <p class="text-3xl font-extrabold font-display text-forest"><span class="animate-counter font-display" data-target="12000">0</span> <span class="text-xs font-semibold">t/mo</span></p>
+                    <p class="text-xs font-bold text-leaf leading-snug">If 1 million Indians upgraded to LED bulb light fixtures.</p>
+                </div>
+                <div class="pt-2 border-t border-gray-100 flex justify-between items-center text-xxs font-bold text-gray-500">
+                    <span>Active participants:</span>
+                    <span class="text-forest font-extrabold">512,340 joined</span>
+                </div>
+            </div>
+            
+            <!-- Card 4 -->
+            <div class="premium-card p-6 hover:-translate-y-1 hover:border-mint/60 transition-all duration-300 space-y-4 relative overflow-hidden flex flex-col justify-between">
+                <div class="space-y-2">
+                    <div class="flex justify-between items-start">
+                        <span class="text-3xl" aria-hidden="true">♻️</span>
+                        <span class="px-2 py-0.5 bg-amber-950/10 text-amber-900 border border-amber-950/20 text-[10px] font-extrabold uppercase rounded-full">Waste</span>
+                    </div>
+                    <p class="text-3xl font-extrabold font-display text-forest"><span class="animate-counter font-display" data-target="6000">0</span> <span class="text-xs font-semibold">t/mo</span></p>
+                    <p class="text-xs font-bold text-leaf leading-snug">If 1 million Indians composted organic kitchen waste.</p>
+                </div>
+                <div class="pt-2 border-t border-gray-100 flex justify-between items-center text-xxs font-bold text-gray-500">
+                    <span>Active participants:</span>
+                    <span class="text-forest font-extrabold">98,400 joined</span>
+                </div>
+            </div>
+
+        </div>
+    </article>
+
+    <!-- Climate commitments context -->
+    <article class="premium-card p-6 md:p-8 space-y-5" aria-labelledby="commitments-title">
+        <h2 id="commitments-title" class="font-display font-extrabold text-xl md:text-2xl text-forest flex items-center gap-2">
+            <span>🌿</span> India's Climate Commitments & Net Zero Pathway
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs md:text-sm font-semibold text-leaf leading-relaxed">
+            <div class="space-y-2">
+                <span class="text-sm font-bold text-forest block">Paris Agreement Targets</span>
+                <p class="font-medium text-gray-600">
+                    Under its Nationally Determined Contributions (NDCs), India has committed to reducing the emissions intensity of its GDP by 45% by 2030 (from 2005 levels) and achieving 50% cumulative electric power installed capacity from non-fossil fuel sources by 2030.
+                </p>
+            </div>
+            <div class="space-y-2">
+                <span class="text-sm font-bold text-forest block">Path to Net Zero by 2070</span>
+                <p class="font-medium text-gray-600">
+                    Announced at COP26, India's target is to reach Net Zero emissions by 2070. This requires a rapid scale-up of renewable solar energy, transitioning railways to 100% electrification, establishing green hydrogen corridors, and adding carbon sinks via forestation.
+                </p>
+            </div>
+            <div class="space-y-2">
+                <span class="text-sm font-bold text-forest block">Individual Action: LiFE</span>
+                <p class="font-medium text-gray-600">
+                    The Government of India's "LiFE" (Lifestyle for Environment) movement emphasizes that individual lifestyle changes—such as reducing food waste, conserving water, preferring public transit, and adopting circular economy habits—play an indispensable role in climate action.
+                </p>
+            </div>
+        </div>
+    </article>
+
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Load saved footprint data from sessionStorage or localStorage
+    let userFootprint = null;
+    const saved = sessionStorage.getItem('carbonFootprint') || localStorage.getItem('carbonFootprint');
+    if (saved) {
+        try {
+            const parsed = JSON.parse(saved);
+            userFootprint = parsed.breakdown || parsed;
+        } catch (e) {
+            console.error("Error parsing saved footprint:", e);
+        }
+    }
+
+    // Challenge Friend Clipboard helper
+    function challengeFriend(encodedText) {
+        const text = decodeURIComponent(encodedText);
+        navigator.clipboard.writeText(text).then(() => {
+            const successEl = document.getElementById('challenge-success');
+            if (successEl) {
+                successEl.classList.remove('hidden');
+                setTimeout(() => {
+                    successEl.classList.add('hidden');
+                }, 4000);
+            }
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+            alert("Copy to clipboard failed. Here is your text: " + text);
+        });
+    }
+
+    // Populate Comparison Banner at top
+    const bannerEl = document.getElementById("comparison-banner");
+    if (userFootprint && userFootprint.total) {
+        const total = userFootprint.total;
+        const avg = 1500;
+        const difference = Math.abs(((total - avg) / avg) * 100).toFixed(1);
+        const relationText = total < avg ? "below" : "above";
+        const relationColor = total < avg ? "text-emerald-600" : "text-amber-500";
+        
+        let celebrationNote = "";
+        let celebrationEmoji = "💡";
+        if (total < avg) {
+            celebrationEmoji = "🎉";
+            celebrationNote = "<strong>Excellent work!</strong> Your footprint is lower than the average Indian household. You're actively helping India reach its Net Zero target.";
+        } else {
+            celebrationEmoji = "📈";
+            celebrationNote = "<strong>Opportunities to improve:</strong> Your footprint is higher than the average Indian household. Switching to public transit and reducing energy standby loads can make a massive dent.";
+        }
+        
+        const shareText = `My carbon footprint is ${total.toFixed(1)} kg CO2/month (${difference}% ${relationText} the India average) on CarbonWise! Can you beat my score? Calculate yours here: ${window.location.origin}`;
+
+        bannerEl.innerHTML = `
+            <div class="space-y-4">
+                <span class="px-3 py-1 bg-mint/20 text-forest border border-mint/40 text-xxs font-extrabold uppercase tracking-widest rounded-full inline-block">
+                    Your Performance Rating
+                </span>
+                
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 pt-2">
+                    <div class="premium-card px-6 py-3 bg-white border border-gray-150 flex flex-col items-center">
+                        <span class="text-xxs text-gray-500 font-extrabold uppercase tracking-wider">Your Footprint</span>
+                        <span class="text-2xl font-extrabold text-forest font-display mt-0.5">${total.toFixed(1)} <span class="text-xs font-semibold">kg CO₂/mo</span></span>
+                    </div>
+                    <span class="hidden sm:inline-block text-xl text-gray-300">⚡</span>
+                    <div class="premium-card px-6 py-3 bg-white border border-gray-150 flex flex-col items-center">
+                        <span class="text-xxs text-gray-500 font-extrabold uppercase tracking-wider">India Average</span>
+                        <span class="text-2xl font-extrabold text-forest font-display mt-0.5">1,500.0 <span class="text-xs font-semibold">kg CO₂/mo</span></span>
+                    </div>
+                </div>
+
+                <div class="bg-paper/50 rounded-xl p-4 max-w-2xl mx-auto border border-mint/10 text-xs md:text-sm font-semibold text-leaf leading-relaxed space-y-1">
+                    <p class="text-forest flex items-center justify-center gap-1.5">
+                        <span class="text-base">${celebrationEmoji}</span> <span>You are <strong class="${relationColor} font-bold font-display text-base">${difference}% ${relationText}</strong> the Indian average benchmark.</span>
+                    </p>
+                    <p class="text-gray-500 font-medium">${celebrationNote}</p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-3 pt-2">
+                    <button onclick="challengeFriend('${encodeURIComponent(shareText)}')" id="challenge-btn" class="px-5 py-2.5 bg-amber text-forest font-bold rounded-xl shadow-md hover:bg-amber-400 hover:-translate-y-0.5 transition-all text-xs flex items-center gap-2">
+                        <span>🤝 Challenge a Friend</span>
+                    </button>
+                    <div id="challenge-success" class="text-xxs font-bold text-forest hidden flex items-center gap-1">
+                        <span class="text-emerald-500">✔</span> Prefilled share message copied to clipboard!
+                    </div>
+                </div>
+            </div>
+        `;
+    } else {
+        bannerEl.innerHTML = `
+            <div class="space-y-4">
+                <span class="px-3 py-1 bg-mint/20 text-forest border border-mint/40 text-xxs font-extrabold uppercase tracking-widest rounded-full inline-block">
+                    Carbon Benchmarking
+                </span>
+                <p class="text-xs md:text-sm font-semibold text-gray-600 max-w-lg mx-auto leading-relaxed">
+                    You haven't run the calculator yet! Run a quick carbon calculation to compare your personal lifestyle emissions against national averages.
+                </p>
+                <div class="pt-2">
+                    <a href="/" class="inline-flex items-center gap-2 bg-forest hover:bg-leaf text-white px-6 py-3 rounded-xl text-xs font-bold font-display shadow-md transition-all hover:-translate-y-0.5">
+                        <span>Calculate Your Footprint First</span> <span>→</span>
+                    </a>
+                </div>
+            </div>
+        `;
+    }
+
+    // Chart.js Custom Plugins
+    // Custom plugin for horizontal target line
+    const targetLinePlugin = {
+        id: 'targetLine',
+        afterDraw(chart) {
+            const { ctx, chartArea: { left, right }, scales: { y } } = chart;
+            const targetValue = 833;
+            const yPos = y.getPixelForValue(targetValue);
+            
+            ctx.save();
+            ctx.strokeStyle = '#dc2626'; // red
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([5, 5]);
+            
+            ctx.beginPath();
+            ctx.moveTo(left, yPos);
+            ctx.lineTo(right, yPos);
+            ctx.stroke();
+            
+            ctx.fillStyle = '#dc2626';
+            ctx.font = 'bold 9px sans-serif';
+            ctx.textAlign = 'right';
+            ctx.fillText('Paris Agreement Target: 833kg', right - 5, yPos - 5);
+            ctx.restore();
+        }
+    };
+
+    // Custom plugin for bar value labels on top
+    const drawDataLabelsPlugin = {
+        id: 'drawDataLabels',
+        afterDatasetsDraw(chart) {
+            const { ctx } = chart;
+            ctx.save();
+            ctx.font = 'bold 9px sans-serif';
+            ctx.fillStyle = '#1B4332';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            
+            chart.data.datasets.forEach((dataset, i) => {
+                const meta = chart.getDatasetMeta(i);
+                const isSourcesChart = chart.canvas.id === 'chart-sources';
+                const sum = dataset.data.reduce((a, b) => a + b, 0);
+                
+                meta.data.forEach((bar, index) => {
+                    const value = dataset.data[index];
+                    if (value !== undefined && value !== null) {
+                        let label = Math.round(value) + 'kg';
+                        if (isSourcesChart && sum > 0) {
+                            const pct = ((value / sum) * 100).toFixed(1);
+                            label += ` (${pct}%)`;
+                        }
+                        ctx.fillText(label, bar.x, bar.y - 4);
+                    }
+                });
+            });
+            ctx.restore();
+        }
+    };
+
+    // Chart 1: Average Monthly CO2 by Country
+    const ctxCountry = document.getElementById('chart-country').getContext('2d');
+    
+    // Create gradients for country comparison
+    const greenGrad = ctxCountry.createLinearGradient(0, 0, 0, 300);
+    greenGrad.addColorStop(0, '#2D6A4F');
+    greenGrad.addColorStop(1, '#1B4332');
+
+    const greyGrad = ctxCountry.createLinearGradient(0, 0, 0, 300);
+    greyGrad.addColorStop(0, '#f3f4f6');
+    greyGrad.addColorStop(1, '#d1d5db');
+
+    new Chart(ctxCountry, {
+        type: 'bar',
+        data: {
+            labels: ['India 🇮🇳', 'Bangladesh 🇧🇩', 'Germany 🇩🇪', 'UK 🇬🇧', 'China 🇨🇳', 'World Avg 🌍', 'USA 🇺🇸'],
+            datasets: [{
+                label: 'Monthly CO2 (kg)',
+                data: [1500, 333, 1583, 1333, 2083, 2083, 4583],
+                backgroundColor: [
+                    greenGrad,  // India
+                    greyGrad,   // Bangladesh
+                    greyGrad,   // Germany
+                    greyGrad,   // UK
+                    greyGrad,   // China
+                    greyGrad,   // World Avg
+                    greyGrad    // USA
+                ],
+                borderRadius: 6,
+                borderWidth: 0
+            }]
+        },
+        plugins: [targetLinePlugin, drawDataLabelsPlugin],
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 5000,
+                    grid: { color: 'rgba(27, 67, 50, 0.05)' },
+                    ticks: { color: '#1B4332', font: { weight: '600', size: 10 } }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#1B4332', font: { weight: '700', size: 10 } }
+                }
+            }
+        }
+    });
+
+    // Chart 2: India Emission Sources Breakdown
+    const ctxSources = document.getElementById('chart-sources').getContext('2d');
+    
+    // Datasets setup: default national average with semi-transparent colors & borders
+    const datasetsList = [{
+        label: 'National Average',
+        data: [600, 400, 300, 200],
+        backgroundColor: [
+            'rgba(255, 183, 3, 0.45)',  // Electricity - amber
+            'rgba(59, 130, 246, 0.45)',  // Transport - blue
+            'rgba(45, 106, 79, 0.45)',   // Diet - green
+            'rgba(119, 73, 54, 0.45)'    // Waste - brown
+        ],
+        borderColor: [
+            '#FFB703',
+            '#3b82f6',
+            '#2D6A4F',
+            '#774936'
+        ],
+        borderWidth: 2,
+        borderRadius: 6
+    }];
+
+    // If user has run calculation, overlay "Your Footprint" as a second dataset (solid colors)
+    if (userFootprint) {
+        datasetsList.push({
+            label: 'Your Footprint',
+            data: [
+                userFootprint.electricity || 0,
+                userFootprint.transport || 0,
+                userFootprint.diet || 0,
+                userFootprint.waste || 0
+            ],
+            backgroundColor: [
+                '#FFB703', // Electricity - amber
+                '#3b82f6', // Transport - blue
+                '#2D6A4F', // Diet - green
+                '#774936'  // Waste - brown
+            ],
+            borderRadius: 6
+        });
+    }
+
+    new Chart(ctxSources, {
+        type: 'bar',
+        data: {
+            labels: ['Electricity', 'Transport', 'Diet', 'Waste'],
+            datasets: datasetsList
+        },
+        plugins: [drawDataLabelsPlugin],
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: { color: '#1B4332', font: { weight: '600' } }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(27, 67, 50, 0.05)' },
+                    ticks: { color: '#1B4332', font: { weight: '600', size: 10 } }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#1B4332', font: { weight: '700', size: 10 } }
+                }
+            }
+        }
+    });
+
+    // Chart 3: Activity Comparison (Horizontal Bar)
+    const ctxActivities = document.getElementById('chart-activities').getContext('2d');
+    new Chart(ctxActivities, {
+        type: 'bar',
+        indexAxis: 'y',
+        data: {
+            labels: [
+                'One long-haul flight',
+                'Eating beef daily for a month',
+                'Driving 1000km petrol car',
+                '100 units grid electricity',
+                'Going vegan for a month (Saves)'
+            ],
+            datasets: [{
+                label: 'CO2 impact / saving (kg CO2)',
+                data: [1500, 900, 192, 82, -48],
+                backgroundColor: [
+                    '#dc2626', // Flight - red
+                    '#ef4444', // Beef - light red
+                    '#FFB703', // Car - amber
+                    '#facc15', // Electricity - yellow
+                    '#2d6a4f'  // Vegan saves - green
+                ],
+                borderRadius: 6,
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: {
+                    grid: { color: 'rgba(27, 67, 50, 0.05)' },
+                    ticks: { color: '#1B4332', font: { weight: '600', size: 10 } }
+                },
+                y: {
+                    grid: { display: false },
+                    ticks: { color: '#1B4332', font: { weight: '700', size: 10 } }
+                }
+            }
+        }
+    });
+
+    // Scroll Counter Animation (using Intersection Observer)
+    window.addEventListener('DOMContentLoaded', () => {
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = entry.target;
+                    const targetVal = parseInt(target.getAttribute('data-target'), 10);
+                    let current = 0;
+                    const duration = 1500; // 1.5s animation duration
+                    const stepTime = 15;
+                    const increment = targetVal / (duration / stepTime);
+                    
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= targetVal) {
+                            target.innerText = targetVal.toLocaleString();
+                            clearInterval(timer);
+                        } else {
+                            target.innerText = Math.floor(current).toLocaleString();
+                        }
+                    }, stepTime);
+                    
+                    observer.unobserve(target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.animate-counter').forEach(el => {
+            observer.observe(el);
+        });
+    });
+</script>
+{% endblock %}

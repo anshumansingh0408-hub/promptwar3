@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CarbonWise - Premium climate tech carbon footprint assistant. Track, analyze, and reduce your emissions with Gemini AI.">
+    <meta name="author" content="CarbonWise AI">
+    <title>{% block title %}CarbonWise{% endblock %}</title>
+
+    <!-- Google Fonts: Plus Jakarta Sans for body and Outfit fallback for display -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        forest: "#1B4332",     /* Primary deep forest green */
+                        leaf: "#2D6A4F",       /* Medium green */
+                        mint: "#95D5B2",       /* Light mint */
+                        amber: "#FFB703",      /* Warm amber accent */
+                        earth: "#774936",      /* Earthy brown */
+                        paper: "#F0F7F4",      /* Soft green-white bg */
+                        surface: "#FFFFFF",
+                        darkforest: "#081C15"  /* Darker shade for footer/dark areas */
+                    },
+                    fontFamily: {
+                        display: ["'Clash Display'", "Outfit", "sans-serif"],
+                        body: ["'Plus Jakarta Sans'", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS Animations and Components -->
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F0F7F4;
+            color: #1B4332;
+        }
+
+        h1, h2, h3, h4, h5, h6, .font-display {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Selection styling */
+        ::selection {
+            background: #95D5B2;
+            color: #1B4332;
+        }
+
+        /* Premium Card styling */
+        .premium-card {
+            border: 1px solid rgba(45, 106, 79, 0.12);
+            box-shadow: 0 4px 24px rgba(27, 67, 50, 0.08), 0 1px 4px rgba(27, 67, 50, 0.04);
+            transition: all 0.25s ease;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.95);
+        }
+        .premium-card:hover {
+            box-shadow: 0 8px 32px rgba(27, 67, 50, 0.16);
+        }
+
+        /* Premium Input styling */
+        input, select, textarea {
+            border: 1.5px solid #E2E8E4;
+            border-radius: 12px;
+            padding: 12px 16px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            font-size: 0.875rem;
+            color: #1B4332;
+            background: #ffffff;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #2D6A4F;
+            box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.12);
+            outline: none;
+        }
+
+        /* Top Border Animated Saffron-to-Green Gradient */
+        @keyframes saffronGreenBorder {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .animated-top-border {
+            height: 3.5px;
+            background: linear-gradient(270deg, #FF9933, #ffffff, #1B4332, #95D5B2);
+            background-size: 800% 800%;
+            animation: saffronGreenBorder 6s ease infinite;
+        }
+
+        /* Glowing Green Left Border for Active Links */
+        .nav-link-active {
+            border-left: 3.5px solid #2D6A4F;
+            padding-left: 10px;
+            color: #1B4332 !important;
+            font-weight: 700;
+            box-shadow: inset 4px 0 8px -4px rgba(45, 106, 79, 0.25);
+            background-color: rgba(149, 213, 178, 0.08);
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* True CSS Scrolling Stats Marquee */
+        @keyframes marquee {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+        .ticker-inner {
+            display: flex;
+            width: max-content;
+            animation: marquee 24s linear infinite;
+        }
+        .ticker-inner:hover {
+            animation-play-state: paused;
+        }
+
+        /* Pulse animation for the live dot */
+        @keyframes pulseLive {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 6px rgba(74, 222, 128, 0);
+            }
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
+            }
+        }
+        .live-pulse-dot {
+            animation: pulseLive 2s infinite;
+        }
+
+        /* Smooth fade-up animation */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fade-up {
+            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="font-body min-h-screen flex flex-col bg-paper text-forest">
+
+    <!-- Accessibility Skip Link -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:bg-forest focus:text-white focus:px-4 focus:py-2 focus:rounded-xl focus:z-50 focus:shadow-lg focus:outline-none">
+        Skip to main content
+    </a>
+
+    <!-- Top Border Gradient -->
+    <div class="animated-top-border z-50"></div>
+
+    <!-- Brand Navbar Header (64px height, backdrop-blur) -->
+    <header role="banner" class="sticky top-0 z-40 bg-white/92 backdrop-blur-[12px] shadow-sm border-b border-paper h-16 flex items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex justify-between items-center h-full">
+            
+            <!-- Left Branding -->
+            <div class="flex items-center gap-3">
+                <a href="/" class="flex items-center gap-2 hover:opacity-90 transition-opacity" id="nav-brand" aria-label="CarbonWise Home">
+                    <span class="text-2xl" aria-label="Earth logo">🌍</span>
+                    <span class="font-display font-extrabold text-xl bg-gradient-to-r from-forest to-mint bg-clip-text text-transparent">CarbonWise</span>
+                </a>
+                <span class="hidden md:inline-block h-5 w-px bg-gray-200"></span>
+                <span class="hidden md:inline-block text-xxs font-bold text-leaf tracking-wider uppercase" id="nav-subtitle">
+                    Track. Understand. Reduce.
+                </span>
+            </div>
+            
+            <!-- Right Navigation links (Desktop) -->
+            <nav class="hidden md:flex items-center gap-1.5 text-xs font-semibold text-gray-600 h-full" role="navigation" aria-label="Main Navigation">
+                <a href="/" class="hover:text-forest hover:bg-paper/40 transition-all px-4 py-2 flex items-center h-10 border-l-3 border-transparent {% if request.path == '/' %}nav-link-active{% endif %}" id="menu-calculator" {% if request.path == '/' %}aria-current="page"{% endif %}>
+                    Calculator
+                </a>
+                <a href="/tips" class="hover:text-forest hover:bg-paper/40 transition-all px-4 py-2 flex items-center h-10 border-l-3 border-transparent {% if request.path == '/tips' %}nav-link-active{% endif %}" id="menu-tips" {% if request.path == '/tips' %}aria-current="page"{% endif %}>
+                    Tips
+                </a>
+                <a href="/compare" class="hover:text-forest hover:bg-paper/40 transition-all px-4 py-2 flex items-center h-10 border-l-3 border-transparent {% if request.path == '/compare' %}nav-link-active{% endif %}" id="menu-compare" {% if request.path == '/compare' %}aria-current="page"{% endif %}>
+                    Compare
+                </a>
+                <a href="/about" class="hover:text-forest hover:bg-paper/40 transition-all px-4 py-2 flex items-center h-10 border-l-3 border-transparent {% if request.path == '/about' %}nav-link-active{% endif %}" id="menu-about" {% if request.path == '/about' %}aria-current="page"{% endif %}>
+                    About
+                </a>
+            </nav>
+
+            <!-- Mobile Hamburger Button -->
+            <button id="mobile-menu-btn" class="md:hidden p-2 rounded-xl text-forest hover:bg-paper focus:outline-none focus:ring-2 focus:ring-mint transition-colors" aria-label="Toggle Navigation Menu" aria-expanded="false">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" id="hamburger-icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mobile Navigation Menu Dropdown (Initially Hidden) -->
+        <nav id="mobile-menu" class="hidden md:hidden absolute top-16 left-0 right-0 bg-white/95 backdrop-blur-[12px] border-b border-paper px-4 py-3 flex flex-col gap-2.5 text-xs font-semibold text-gray-600 shadow-md" role="navigation" aria-label="Mobile Navigation">
+            <a href="/" class="py-2 px-4 rounded-lg hover:bg-paper transition-all {% if request.path == '/' %}bg-paper text-forest{% endif %}" {% if request.path == '/' %}aria-current="page"{% endif %}>
+                Calculator
+            </a>
+            <a href="/tips" class="py-2 px-4 rounded-lg hover:bg-paper transition-all {% if request.path == '/tips' %}bg-paper text-forest{% endif %}" {% if request.path == '/tips' %}aria-current="page"{% endif %}>
+                Tips
+            </a>
+            <a href="/compare" class="py-2 px-4 rounded-lg hover:bg-paper transition-all {% if request.path == '/compare' %}bg-paper text-forest{% endif %}" {% if request.path == '/compare' %}aria-current="page"{% endif %}>
+                Compare
+            </a>
+            <a href="/about" class="py-2 px-4 rounded-lg hover:bg-paper transition-all {% if request.path == '/about' %}bg-paper text-forest{% endif %}" {% if request.path == '/about' %}aria-current="page"{% endif %}>
+                About
+            </a>
+        </nav>
+    </header>
+
+    <!-- Stats Ticker Bar (Scrolling Marquee) -->
+    <div class="bg-forest text-white py-2 overflow-hidden text-xs font-semibold tracking-wider border-b border-leaf select-none" role="region" aria-label="Climate Facts Live Ticker">
+        <div class="ticker-inner gap-16 whitespace-nowrap">
+            <span>🌱 India planted 1.4B trees in 2023</span>
+            <span class="text-mint opacity-85">•</span>
+            <span>🔋 Solar power cheapest energy source</span>
+            <span class="text-mint opacity-85">•</span>
+            <span>🌡 India avg: 1,500 kg CO2/month</span>
+            <span class="text-mint opacity-85">•</span>
+            <span>🌳 1 tree absorbs ~21kg CO2/year</span>
+            <span class="text-mint opacity-85">•</span>
+            <span>🚌 Bus emits 5x less than car</span>
+            <span class="text-mint opacity-85">•</span>
+            <span>♻️ Recycling reduces waste emissions by 60%</span>
+            
+            <!-- Duplication for infinite loops -->
+            <span class="text-mint opacity-85">•</span>
+            <span>🌱 India planted 1.4B trees in 2023</span>
+            <span class="text-mint opacity-85">•</span>
+            <span>🔋 Solar power cheapest energy source</span>
+            <span class="text-mint opacity-85">•</span>
+            <span>🌡 India avg: 1,500 kg CO2/month</span>
+            <span class="text-mint opacity-85">•</span>
+            <span>🌳 1 tree absorbs ~21kg CO2/year</span>
+            <span class="text-mint opacity-85">•</span>
+            <span>🚌 Bus emits 5x less than car</span>
+            <span class="text-mint opacity-85">•</span>
+            <span>♻️ Recycling reduces waste emissions by 60%</span>
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <main role="main" id="main-content" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 focus:outline-none">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-darkforest text-paper border-t border-forest/20 mt-auto py-12 px-4 md:px-8" id="footer-section">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            
+            <!-- Col 1: About -->
+            <div class="flex flex-col gap-3">
+                <span class="text-xl font-bold font-display text-mint">🌍 CarbonWise</span>
+                <p class="text-xs text-mint/80 leading-relaxed font-medium">
+                    A climate-tech platform designed to calculate, visualize, and systematically reduce household emissions. Empowering green choices across India with Gemini AI analysis.
+                </p>
+            </div>
+
+            <!-- Col 2: Quick Links -->
+            <div class="flex flex-col gap-3">
+                <span class="text-sm font-bold uppercase tracking-wider text-white">Quick Links</span>
+                <ul class="text-xs space-y-2 text-mint/80 font-semibold" role="navigation" aria-label="Footer Navigation">
+                    <li><a href="/" class="hover:text-white transition-colors">Emissions Calculator</a></li>
+                    <li><a href="/tips" class="hover:text-white transition-colors">Reduction Tips</a></li>
+                    <li><a href="/compare" class="hover:text-white transition-colors">Emissions Comparison</a></li>
+                    <li><a href="/about" class="hover:text-white transition-colors">About the Project</a></li>
+                </ul>
+            </div>
+
+            <!-- Col 3: Data Sources -->
+            <div class="flex flex-col gap-3">
+                <span class="text-sm font-bold uppercase tracking-wider text-white">Data Sources</span>
+                <p class="text-xs text-mint/80 leading-relaxed font-medium">
+                    Calculations are based on emission coefficients from the Intergovernmental Panel on Climate Change (IPCC) AR6 and India's Central Electricity Authority (CEA) grid statistics.
+                </p>
+            </div>
+        </div>
+
+        <!-- Bottom bar -->
+        <div class="max-w-7xl mx-auto pt-6 border-t border-forest/30 flex flex-col sm:flex-row justify-between items-center gap-4 text-xxs md:text-xs text-mint/60 font-medium tracking-wide">
+            <div>
+                Powered by Google Gemini AI | PromptWars Virtual Challenge 3 | Data: IPCC & India CEA
+            </div>
+            <div>
+                &copy; 2026 CarbonWise. Dedicated to environmental sustainability.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Global Scripts -->
+    <script>
+        // Hamburger Menu Toggle
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const hamburgerIcon = document.getElementById('hamburger-icon');
+
+        if (menuBtn && mobileMenu) {
+            menuBtn.addEventListener('click', () => {
+                const isExpanded = menuBtn.getAttribute('aria-expanded') === 'true';
+                menuBtn.setAttribute('aria-expanded', !isExpanded);
+                mobileMenu.classList.toggle('hidden');
+
+                if (!isExpanded) {
+                    hamburgerIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />`;
+                } else {
+                    hamburgerIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16" />`;
+                }
+            });
+        }
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

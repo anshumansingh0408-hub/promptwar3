@@ -1,0 +1,346 @@
+{% extends "base.html" %}
+
+{% block title %}Reduction Tips 🌱 - CarbonWise{% endblock %}
+
+{% block content %}
+<section class="max-w-5xl mx-auto space-y-12 animate-fade-up">
+    
+    <!-- Hero Section -->
+    <div class="relative rounded-3xl overflow-hidden border border-mint/20 shadow-sm">
+        <div class="absolute inset-0 bg-gradient-to-r from-mint/20 via-paper to-white opacity-95"></div>
+        <div class="absolute -right-12 -bottom-12 w-64 h-64 bg-mint/10 rounded-full blur-3xl"></div>
+        <div class="absolute -left-12 -top-12 w-64 h-64 bg-amber/5 rounded-full blur-3xl"></div>
+        
+        <div class="relative px-6 py-12 md:px-12 md:py-16 text-center space-y-4">
+            <span class="px-3 py-1 bg-mint/30 text-forest border border-mint/40 text-xxs font-extrabold uppercase tracking-widest rounded-full inline-block">
+                Actionable Reduction Guide
+            </span>
+            <h1 class="font-display font-extrabold text-3xl md:text-5xl text-forest tracking-tight">
+                Start Small. <span class="bg-gradient-to-r from-forest to-leaf bg-clip-text text-transparent">Go Green. 🌱</span>
+            </h1>
+            <p class="text-sm md:text-base text-leaf font-semibold max-w-2xl mx-auto leading-relaxed">
+                Small everyday choices stack up to create massive global effects. Explore practical, structured strategies below to systematically lower your carbon footprint.
+            </p>
+        </div>
+    </div>
+
+    <!-- 3 Easy Wins Highlight Box -->
+    <div class="premium-card p-6 md:p-8 space-y-6 relative overflow-hidden" role="region" aria-labelledby="wins-box-title">
+        <div class="absolute -top-12 -right-12 w-36 h-36 bg-mint/20 rounded-full blur-2xl"></div>
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h2 id="wins-box-title" class="font-display font-extrabold text-xl md:text-2xl text-forest flex items-center gap-2">
+                    <span class="p-1.5 bg-mint/20 rounded-lg text-lg">🏆</span> Start with these 3 Easy Wins
+                </h2>
+                <p class="text-xs text-leaf font-medium mt-1">Simple, high-impact changes requiring minimal effort.</p>
+            </div>
+            <span class="px-3 py-1 bg-mint/20 text-forest border border-mint/40 text-xxs font-bold uppercase tracking-wider rounded-full">
+                Quick Start
+            </span>
+        </div>
+        
+        <div class="flex flex-col md:flex-row items-stretch justify-between gap-4 relative">
+            <!-- Step 1 -->
+            <div class="flex-1 premium-card p-5 hover:border-mint/60 hover:-translate-y-0.5 transition-all relative z-10 flex flex-col justify-between gap-4">
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-leaf">Step 1</span>
+                        <span class="text-xs font-extrabold text-forest">💡 Light Upgrade</span>
+                    </div>
+                    <p class="text-sm font-bold text-forest leading-snug">Switch to high-efficiency LED bulbs</p>
+                    <p class="text-xxs text-leaf/80 mt-2 italic border-l-2 border-mint/50 pl-2 bg-paper/50 py-1 rounded">
+                        *Delhi Metro saves 6.3 lakh tonnes CO2/year by switching entirely to LED and green energy.*
+                    </p>
+                </div>
+                <div class="flex justify-between items-center text-xxs font-bold text-leaf pt-2 border-t border-gray-100">
+                    <span class="flex items-center gap-1"><span class="text-emerald-500">🌱</span> Save: 20 kg/mo</span>
+                    <span class="flex items-center gap-1"><span class="text-amber-500">₹</span> Cost: ~₹200</span>
+                </div>
+            </div>
+
+            <!-- Connector 1 -->
+            <div class="hidden md:flex items-center justify-center text-forest/20 text-xl font-mono select-none px-1">
+                <span class="animate-pulse">····➤</span>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="flex-1 premium-card p-5 hover:border-mint/60 hover:-translate-y-0.5 transition-all relative z-10 flex flex-col justify-between gap-4">
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-leaf">Step 2</span>
+                        <span class="text-xs font-extrabold text-forest">🛍️ Zero Waste</span>
+                    </div>
+                    <p class="text-sm font-bold text-forest leading-snug">Carry a reusable cotton bag always</p>
+                    <p class="text-xxs text-leaf/80 mt-2 italic border-l-2 border-mint/50 pl-2 bg-paper/50 py-1 rounded">
+                        *Indian local bazaars are phasing out single-use plastics. Carry your bag to avoid plastic.*
+                    </p>
+                </div>
+                <div class="flex justify-between items-center text-xxs font-bold text-leaf pt-2 border-t border-gray-100">
+                    <span class="flex items-center gap-1"><span class="text-emerald-500">🌱</span> Save: 2 kg/mo</span>
+                    <span class="flex items-center gap-1"><span class="text-amber-500">₹</span> Cost: ₹0</span>
+                </div>
+            </div>
+
+            <!-- Connector 2 -->
+            <div class="hidden md:flex items-center justify-center text-forest/20 text-xl font-mono select-none px-1">
+                <span class="animate-pulse">····➤</span>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="flex-1 premium-card p-5 hover:border-mint/60 hover:-translate-y-0.5 transition-all relative z-10 flex flex-col justify-between gap-4">
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-leaf">Step 3</span>
+                        <span class="text-xs font-extrabold text-forest">🔌 Phantom Load</span>
+                    </div>
+                    <p class="text-sm font-bold text-forest leading-snug">Unplug standby devices and chargers</p>
+                    <p class="text-xxs text-leaf/80 mt-2 italic border-l-2 border-mint/50 pl-2 bg-paper/50 py-1 rounded">
+                        *Standby loads consume up to 10% of household energy. Flipping the switch cuts this.*
+                    </p>
+                </div>
+                <div class="flex justify-between items-center text-xxs font-bold text-leaf pt-2 border-t border-gray-100">
+                    <span class="flex items-center gap-1"><span class="text-emerald-500">🌱</span> Save: 15 kg/mo</span>
+                    <span class="flex items-center gap-1"><span class="text-amber-500">₹</span> Cost: ₹0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tips Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- 1. Transport -->
+        <article class="premium-card p-6 border-l-4 border-blue-500 hover:border-blue-600 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between gap-6" aria-labelledby="tip-transport-title">
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl" aria-hidden="true">🚗</span>
+                        <h2 id="tip-transport-title" class="font-display font-extrabold text-lg text-forest">Transport</h2>
+                    </div>
+                    <span class="px-2.5 py-1 rounded bg-amber-50 text-amber-800 border border-amber-200/50 text-xxs font-bold uppercase tracking-wider flex items-center gap-1">
+                        Difficulty: <span class="font-mono font-extrabold tracking-widest text-xs">●●○</span>
+                    </span>
+                </div>
+                <ul class="text-xs md:text-sm font-semibold text-leaf space-y-2.5 pl-5 list-disc leading-relaxed">
+                    <li>Transition to public transit systems like the metro or city buses for daily commutes.</li>
+                    <li>Organize carpools or ride-shares to maximize vehicle occupancy.</li>
+                    <li>Consider switching to an electric vehicle (EV) or a hybrid for your next car.</li>
+                    <li>Arrange to work from home 2 days/week to eliminate commuting emissions.</li>
+                </ul>
+                <div class="text-xxs text-leaf/80 italic pl-3 border-l-2 border-blue-300 bg-blue-50/20 py-1.5 rounded">
+                    *Local context: Delhi/Mumbai Metro networks save millions of private-vehicle trips daily.*
+                </div>
+            </div>
+            
+            <!-- CO2 Savings Meter (up to 500kg) -->
+            <div class="space-y-1.5 pt-2 border-t border-gray-100">
+                <div class="flex justify-between text-xxs font-bold text-forest uppercase tracking-wider">
+                    <span>CO2 Savings Potential</span>
+                    <span>180 / 500 kg / month</span>
+                </div>
+                <div class="w-full h-2.5 bg-gray-200/50 rounded-full overflow-hidden shadow-inner border border-mint/20">
+                    <div class="bg-blue-500 h-full rounded-full" style="width: 36%"></div>
+                </div>
+            </div>
+        </article>
+
+        <!-- 2. Electricity -->
+        <article class="premium-card p-6 border-l-4 border-amber-500 hover:border-amber-600 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between gap-6" aria-labelledby="tip-electricity-title">
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl" aria-hidden="true">⚡</span>
+                        <h2 id="tip-electricity-title" class="font-display font-extrabold text-lg text-forest">Electricity</h2>
+                    </div>
+                    <span class="px-2.5 py-1 rounded bg-emerald-50 text-emerald-800 border border-emerald-200/50 text-xxs font-bold uppercase tracking-wider flex items-center gap-1">
+                        Difficulty: <span class="font-mono font-extrabold tracking-widest text-xs">●○○</span>
+                    </span>
+                </div>
+                <ul class="text-xs md:text-sm font-semibold text-leaf space-y-2.5 pl-5 list-disc leading-relaxed">
+                    <li>Replace traditional incandescent bulbs with high-efficiency LED lights.</li>
+                    <li>Look for BEE 5-star rating labels when buying home appliances.</li>
+                    <li>Install rooftop solar panels to generate clean energy locally.</li>
+                    <li>Unplug standby devices and power strips when they are not in use.</li>
+                </ul>
+                <div class="text-xxs text-leaf/80 italic pl-3 border-l-2 border-amber-300 bg-amber-50/20 py-1.5 rounded">
+                    *Local context: BEE 5-star rated ACs consume up to 30% less electricity than 1-star models.*
+                </div>
+            </div>
+            
+            <!-- CO2 Savings Meter (up to 300kg) -->
+            <div class="space-y-1.5 pt-2 border-t border-gray-100">
+                <div class="flex justify-between text-xxs font-bold text-forest uppercase tracking-wider">
+                    <span>CO2 Savings Potential</span>
+                    <span>120 / 300 kg / month</span>
+                </div>
+                <div class="w-full h-2.5 bg-gray-200/50 rounded-full overflow-hidden shadow-inner border border-mint/20">
+                    <div class="bg-amber-500 h-full rounded-full" style="width: 40%"></div>
+                </div>
+            </div>
+        </article>
+
+        <!-- 3. Diet -->
+        <article class="premium-card p-6 border-l-4 border-emerald-500 hover:border-emerald-600 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between gap-6" aria-labelledby="tip-diet-title">
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl" aria-hidden="true">🍽</span>
+                        <h2 id="tip-diet-title" class="font-display font-extrabold text-lg text-forest">Diet</h2>
+                    </div>
+                    <span class="px-2.5 py-1 rounded bg-rose-50 text-rose-800 border border-rose-200/50 text-xxs font-bold uppercase tracking-wider flex items-center gap-1">
+                        Difficulty: <span class="font-mono font-extrabold tracking-widest text-xs">●●●</span>
+                    </span>
+                </div>
+                <ul class="text-xs md:text-sm font-semibold text-leaf space-y-2.5 pl-5 list-disc leading-relaxed">
+                    <li>Reduce consumption of red meats, which require high-carbon production methods.</li>
+                    <li>Prioritize locally sourced and seasonal ingredients to cut food transport miles.</li>
+                    <li>Minimize kitchen waste by planning meals and storing food properly.</li>
+                    <li>Adopt a fully plant-based or vegan menu at least 2 days every week.</li>
+                </ul>
+                <div class="text-xxs text-leaf/80 italic pl-3 border-l-2 border-emerald-300 bg-emerald-50/20 py-1.5 rounded">
+                    *Local context: Traditional low-meat diets (dal, roti, vegetables) represent massive carbon savings.*
+                </div>
+            </div>
+            
+            <!-- CO2 Savings Meter (up to 200kg) -->
+            <div class="space-y-1.5 pt-2 border-t border-gray-100">
+                <div class="flex justify-between text-xxs font-bold text-forest uppercase tracking-wider">
+                    <span>CO2 Savings Potential</span>
+                    <span>80 / 200 kg / month</span>
+                </div>
+                <div class="w-full h-2.5 bg-gray-200/50 rounded-full overflow-hidden shadow-inner border border-mint/20">
+                    <div class="bg-emerald-500 h-full rounded-full" style="width: 40%"></div>
+                </div>
+            </div>
+        </article>
+
+        <!-- 4. Waste -->
+        <article class="premium-card p-6 border-l-4 border-amber-950 hover:border-amber-900 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between gap-6" aria-labelledby="tip-waste-title">
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl" aria-hidden="true">♻️</span>
+                        <h2 id="tip-waste-title" class="font-display font-extrabold text-lg text-forest">Waste</h2>
+                    </div>
+                    <span class="px-2.5 py-1 rounded bg-emerald-50 text-emerald-800 border border-emerald-200/50 text-xxs font-bold uppercase tracking-wider flex items-center gap-1">
+                        Difficulty: <span class="font-mono font-extrabold tracking-widest text-xs">●○○</span>
+                    </span>
+                </div>
+                <ul class="text-xs md:text-sm font-semibold text-leaf space-y-2.5 pl-5 list-disc leading-relaxed">
+                    <li>Compost organic kitchen scraps to reduce methane release in landfill dump sites.</li>
+                    <li>Refuse single-use plastics and carry durable reusable shopping bags.</li>
+                    <li>Repair items before replacing them to extend their product lifespan.</li>
+                    <li>Buy pre-owned or second-hand clothes, furniture, and electronics.</li>
+                </ul>
+                <div class="text-xxs text-leaf/80 italic pl-3 border-l-2 border-amber-800 bg-amber-900/5 py-1.5 rounded">
+                    *Local context: Solid waste segregation is mandatory in many Indian cities under municipal laws.*
+                </div>
+            </div>
+            
+            <!-- CO2 Savings Meter (up to 100kg) -->
+            <div class="space-y-1.5 pt-2 border-t border-gray-100">
+                <div class="flex justify-between text-xxs font-bold text-forest uppercase tracking-wider">
+                    <span>CO2 Savings Potential</span>
+                    <span>40 / 100 kg / month</span>
+                </div>
+                <div class="w-full h-2.5 bg-gray-200/50 rounded-full overflow-hidden shadow-inner border border-mint/20">
+                    <div class="bg-amber-950/70 h-full rounded-full" style="width: 40%"></div>
+                </div>
+            </div>
+        </article>
+
+        <!-- 5. Water -->
+        <article class="premium-card p-6 border-l-4 border-teal-500 hover:border-teal-600 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between gap-6" aria-labelledby="tip-water-title">
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl" aria-hidden="true">💧</span>
+                        <h2 id="tip-water-title" class="font-display font-extrabold text-lg text-forest">Water</h2>
+                    </div>
+                    <span class="px-2.5 py-1 rounded bg-emerald-50 text-emerald-800 border border-emerald-200/50 text-xxs font-bold uppercase tracking-wider flex items-center gap-1">
+                        Difficulty: <span class="font-mono font-extrabold tracking-widest text-xs">●○○</span>
+                    </span>
+                </div>
+                <ul class="text-xs md:text-sm font-semibold text-leaf space-y-2.5 pl-5 list-disc leading-relaxed">
+                    <li>Fix leaking taps, pipes, and toilets promptly to prevent resource waste.</li>
+                    <li>Take shorter showers and install low-flow aerator nozzle attachments.</li>
+                    <li>Incorporate rainwater harvesting setups for watering garden vegetation.</li>
+                    <li>Install highly efficient drip irrigation layouts for domestic landscaping.</li>
+                </ul>
+                <div class="text-xxs text-leaf/80 italic pl-3 border-l-2 border-teal-350 bg-teal-50/20 py-1.5 rounded">
+                    *Local context: Rooftop rainwater harvesting is highly recommended in water-scarce Indian metros.*
+                </div>
+            </div>
+            
+            <!-- CO2 Savings Meter (up to 50kg) -->
+            <div class="space-y-1.5 pt-2 border-t border-gray-100">
+                <div class="flex justify-between text-xxs font-bold text-forest uppercase tracking-wider">
+                    <span>CO2 Savings Potential</span>
+                    <span>30 / 50 kg / month</span>
+                </div>
+                <div class="w-full h-2.5 bg-gray-200/50 rounded-full overflow-hidden shadow-inner border border-mint/20">
+                    <div class="bg-teal-500 h-full rounded-full" style="width: 60%"></div>
+                </div>
+            </div>
+        </article>
+
+        <!-- 6. Shopping -->
+        <article class="premium-card p-6 border-l-4 border-indigo-500 hover:border-indigo-600 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between gap-6" aria-labelledby="tip-shopping-title">
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl" aria-hidden="true">🛍</span>
+                        <h2 id="tip-shopping-title" class="font-display font-extrabold text-lg text-forest">Shopping</h2>
+                    </div>
+                    <span class="px-2.5 py-1 rounded bg-amber-50 text-amber-800 border border-amber-200/50 text-xxs font-bold uppercase tracking-wider flex items-center gap-1">
+                        Difficulty: <span class="font-mono font-extrabold tracking-widest text-xs">●●○</span>
+                    </span>
+                </div>
+                <ul class="text-xs md:text-sm font-semibold text-leaf space-y-2.5 pl-5 list-disc leading-relaxed">
+                    <li>Buy fewer physical items and choose experiences over material possessions.</li>
+                    <li>Invest in high-quality items that last longer, reducing purchase cycles.</li>
+                    <li>Select sustainable brands with transparent eco-friendly supply chains.</li>
+                    <li>Avoid fast-fashion labels and buy classic, long-lasting clothing items.</li>
+                </ul>
+                <div class="text-xxs text-leaf/80 italic pl-3 border-l-2 border-indigo-300 bg-indigo-50/20 py-1.5 rounded">
+                    *Local context: Supporting local Indian weavers, handloom fabrics, or khadi cuts shipping emissions.*
+                </div>
+            </div>
+            
+            <!-- CO2 Savings Meter (up to 150kg) -->
+            <div class="space-y-1.5 pt-2 border-t border-gray-100">
+                <div class="flex justify-between text-xxs font-bold text-forest uppercase tracking-wider">
+                    <span>CO2 Savings Potential</span>
+                    <span>50 / 150 kg / month</span>
+                </div>
+                <div class="w-full h-2.5 bg-gray-200/50 rounded-full overflow-hidden shadow-inner border border-mint/20">
+                    <div class="bg-indigo-500 h-full rounded-full" style="width: 33.3%"></div>
+                </div>
+            </div>
+        </article>
+
+    </div>
+
+    <!-- Bottom CTA Banner -->
+    <div class="bg-gradient-to-br from-forest to-leaf text-white rounded-3xl p-8 md:p-12 shadow-xl relative overflow-hidden border border-white/10 text-center space-y-6" role="region" aria-labelledby="cta-title">
+        <div class="absolute -top-16 -left-16 w-48 h-48 bg-mint/10 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-16 -right-16 w-48 h-48 bg-amber/10 rounded-full blur-3xl"></div>
+        
+        <div class="max-w-2xl mx-auto space-y-4">
+            <span class="text-xxs font-extrabold uppercase tracking-widest text-mint bg-white/10 px-3 py-1 rounded-full">Interactive Calculator</span>
+            <h2 id="cta-title" class="font-display font-extrabold text-2xl md:text-4xl text-white">Ready to analyze your footprint?</h2>
+            <p class="text-sm text-paper/85 font-medium leading-relaxed max-w-lg mx-auto">
+                Use our premium emissions calculator to analyze your personal lifestyle impact and get customized reduction recommendations.
+            </p>
+        </div>
+        
+        <div class="flex justify-center pt-2">
+            <a href="/" class="px-8 py-4 bg-amber text-forest font-bold rounded-xl shadow-lg hover:bg-amber-400 hover:-translate-y-0.5 transition-all flex items-center gap-2 group text-sm">
+                <span>Calculate Your Footprint</span>
+                <span class="group-hover:translate-x-1 transition-transform">→</span>
+            </a>
+        </div>
+    </div>
+
+</section>
+{% endblock %}
