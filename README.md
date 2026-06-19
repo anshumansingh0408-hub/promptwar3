@@ -40,3 +40,18 @@ CarbonWise is engineered using enterprise-grade, serverless Google Cloud technol
 * Docker Desktop
 * Google Cloud SDK configured with your project credentials
 
+---
+
+## 🛠️ Code Quality
+
+CarbonWise enforces strict coding guidelines and best practices to ensure high maintainability, readability, and reliability:
+
+- **Modular Architecture:** Core logic is cleanly segregated:
+  - `app.py`: Acts as a controller handling web/API routes (each route handler and function is strictly capped under 25 lines of code).
+  - `carbon_calculator.py`: Pure deterministic engine calculating category emissions and comparing against regional benchmarks.
+  - `utils.py`: Reusable utility functions covering rate limiting, cache checks, payload schemas, and Gemini API calls.
+- **Type Annotations:** PEP 484 type hints are fully integrated across all function signatures to enable static type analysis.
+- **Documentation Standards:** Every function is fully documented using Google-Style Docstrings featuring explicit `Args`, `Returns`, and `Raises` sections.
+- **Linting Rules:** Configured via `.flake8` (limiting max-line-length to 100) to ensure uniform style guidelines.
+
+

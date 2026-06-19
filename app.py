@@ -1,8 +1,7 @@
-"""
-CarbonWise - AI Carbon Footprint Assistant Backend
+"""CarbonWise - AI Carbon Footprint Assistant Backend.
 
 Purpose:
-Provide a smart web application that calculates household monthly carbon footprint emissions 
+Provide a smart web application that calculates household monthly carbon footprint emissions
 and delivers conversational green living advice through a context-aware AI chat assistant.
 
 Architecture:
@@ -18,30 +17,26 @@ Architecture:
 
 import os
 import time
-import hashlib
-import json
-import requests
 import gzip
 import io
-from flask import Flask, render_template, request, jsonify, g
+import requests
+from flask import Flask, render_template, request, jsonify, g, Response
 from carbon_calculator import (
     CONFIG as CALC_CONFIG,
     calculate_total_footprint,
     get_recommendations
 )
+from utils import (
+    get_cache_key,
+    check_rate_limit,
+    validate_calculate_data,
+    validate_chat_data,
+    format_system_prompt,
+    format_gemini_contents,
+    call_gemini_api
+)
 
 app = Flask(__name__)
-from functools import lru_cache
-
-def cached_calculate(transport_mode, km_per_day, electricity_units, diet_type, waste_kg_per_week):
-    data = {
-        "transport_mode": transport_mode,
-        "km_per_day": km_per_day,
-        "electricity_units": electricity_units,
-        "diet_type": diet_type,
-        "waste_kg_per_week": waste_kg_per_week
-    }
-    return calculate_total_footprint(data)
 
 # Load simple .env file manually if it exists on startup
 if os.path.exists(".env"):
@@ -52,7 +47,9 @@ if os.path.exists(".env"):
                 key, val = line.split("=", 1)
                 os.environ[key.strip()] = val.strip()
 
-# Application Configuration
+# =====================================================================
+# Constants Section
+# =====================================================================
 CONFIG = {
     "MAX_MESSAGE_LENGTH": 500,
     "MAX_HISTORY_LENGTH": 10,
@@ -84,69 +81,79 @@ SYSTEM_PROMPT = (
 )
 
 
-def get_cache_key(message: str, footprint_data: dict) -> str:
-    """
-    Generates a unique SHA-256 hash key using user message and their footprint data.
+def cached_calculate(
+    mode: str, km: float, elec: float, diet: str, waste: float
+) -> dict:
+    """Wrapper function to call the cached calculator logic.
 
-    Parameters:
-        message (str): Sanitized user query string.
-        footprint_data (dict or None): Calculated emissions footprint details.
-
-    Returns:
-        str: A 64-character hexadecimal hash string.
-    """
-    # Canonicalize footprint dict to keep keys sorted
-    fp_str = json.dumps(footprint_data, sort_keys=True) if footprint_data else ""
-    combined = f"{message.strip()}_{fp_str}"
-    return hashlib.sha256(combined.encode("utf-8")).hexdigest()
-
-
-def check_rate_limit(ip: str) -> bool:
-    """
-    Enforces IP-based rate limiting. Checks if the request limit (RATE_LIMIT_REQUESTS) 
-    has been reached inside the tracking window (RATE_LIMIT_WINDOW).
-
-    Parameters:
-        ip (str): The requesting client IP address.
+    Args:
+        mode (str): Transport mode.
+        km (float): Daily km.
+        elec (float): Monthly kWh.
+        diet (str): Diet type.
+        waste (float): Weekly waste kg.
 
     Returns:
-        bool: True if request is allowed, False if limit has been exceeded.
+        dict: Emission calculations breakdown.
     """
-    now = time.time()
-    if ip not in RATE_LIMIT_TRACKER:
-        RATE_LIMIT_TRACKER[ip] = []
-    
-    # Filter out timestamps older than the window
-    recent_requests = [t for t in RATE_LIMIT_TRACKER[ip] if now - t < CONFIG["RATE_LIMIT_WINDOW"]]
-    RATE_LIMIT_TRACKER[ip] = recent_requests
-    
-    if len(recent_requests) >= CONFIG["RATE_LIMIT_REQUESTS"]:
-        return False
-        
-    RATE_LIMIT_TRACKER[ip].append(now)
-    return True
+    data = {
+        "transport_mode": mode,
+        "km_per_day": km,
+        "electricity_units": elec,
+        "diet_type": diet,
+        "waste_kg_per_week": waste
+    }
+    return calculate_total_footprint(data)
 
 
 @app.before_request
-def start_timer():
+def start_timer() -> None:
+    """Initializes the request timer to evaluate latency durations.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
     g.start = time.time()
 
 
-def compress_response(response):
-    accept_encoding = request.headers.get("Accept-Encoding", "")
-    if (
+def should_compress(response: Response, accept_encoding: str) -> bool:
+    """Checks if the Flask Response qualifies for gzip compression.
+
+    Args:
+        response (Response): Flask Response object.
+        accept_encoding (str): Accept-Encoding request header.
+
+    Returns:
+        bool: True if response should be compressed, False otherwise.
+    """
+    return not (
         "gzip" not in accept_encoding.lower() or
         response.status_code < 200 or
         response.status_code >= 300 or
         "Content-Encoding" in response.headers or
         response.direct_passthrough
-    ):
+    )
+
+
+def compress_response(response: Response) -> Response:
+    """Compresses HTML and JSON responses using gzip if requested.
+
+    Args:
+        response (Response): Flask Response object.
+
+    Returns:
+        Response: Compressed or original Response object.
+    """
+    accept = request.headers.get("Accept-Encoding", "")
+    if not should_compress(response, accept):
         return response
 
-    content = response.get_data()
     gzip_buffer = io.BytesIO()
     with gzip.GzipFile(mode="wb", fileobj=gzip_buffer) as gzip_file:
-        gzip_file.write(content)
+        gzip_file.write(response.get_data())
     
     response.set_data(gzip_buffer.getvalue())
     response.headers["Content-Encoding"] = "gzip"
@@ -155,9 +162,14 @@ def compress_response(response):
 
 
 @app.after_request
-def log_request_time_and_security(response):
-    """
-    Global Flask interceptor that appends safety headers and timing logs on outgoing responses.
+def log_request_time_and_security(response: Response) -> Response:
+    """Appends security headers and records response processing latency.
+
+    Args:
+        response (Response): Flask Response object.
+
+    Returns:
+        Response: Outgoing Response object with headers added.
     """
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
@@ -171,230 +183,248 @@ def log_request_time_and_security(response):
 
 
 @app.route("/", methods=["GET"])
-def index():
-    """
-    Serves the main carbon assistant index interface page.
+def index() -> str:
+    """Serves the main carbon assistant index interface page.
+
+    Args:
+        None
+
+    Returns:
+        str: Rendered HTML template string.
     """
     return render_template("index.html")
 
 
 @app.route("/tips", methods=["GET"])
-def tips():
-    """
-    Serves the reduction tips page.
+def tips() -> str:
+    """Serves the reduction tips page.
+
+    Args:
+        None
+
+    Returns:
+        str: Rendered HTML template string.
     """
     return render_template("tips.html")
 
 
 @app.route("/about", methods=["GET"])
-def about():
-    """
-    Serves the about page.
+def about() -> str:
+    """Serves the about page.
+
+    Args:
+        None
+
+    Returns:
+        str: Rendered HTML template string.
     """
     return render_template("about.html")
 
 
 @app.route("/compare", methods=["GET"])
-def compare():
-    """
-    Serves the compare page.
+def compare() -> str:
+    """Serves the compare page.
+
+    Args:
+        None
+
+    Returns:
+        str: Rendered HTML template string.
     """
     return render_template("compare.html")
 
 
-@app.route("/api/calculate", methods=["POST"])
-def api_calculate():
-    """
-    JSON API route to evaluate monthly carbon footprint breakdown and recommendations.
+def process_calculation(validated_data: dict) -> dict:
+    """Invokes cached calculation and compiles recommendations.
 
-    Accepts POST JSON payload:
-        {
-            "transport_mode": str,
-            "km_per_day": float/int,
-            "electricity_units": float/int,
-            "diet_type": str,
-            "waste_kg_per_week": float/int
-        }
+    Args:
+        validated_data (dict): Pre-validated carbon footprint inputs.
 
     Returns:
-        JSON response with breakdown values and personalized reduction action items,
-        or validation error description under 400 Bad Request status.
+        dict: Breakdown and recommendations dictionary.
+    """
+    breakdown = cached_calculate(
+        validated_data["transport_mode"],
+        validated_data["km_per_day"],
+        validated_data["electricity_units"],
+        validated_data["diet_type"],
+        validated_data["waste_kg_per_week"]
+    )
+    return {
+        "breakdown": breakdown,
+        "recommendations": get_recommendations(breakdown)
+    }
+
+
+@app.route("/api/calculate", methods=["POST"])
+def api_calculate() -> Response:
+    """JSON API route to evaluate monthly carbon footprint.
+
+    Args:
+        None
+
+    Returns:
+        Response: JSON response containing breakdown or error details.
     """
     data = request.get_json(silent=True)
-    if not data:
-        return jsonify({"error": "Missing JSON request payload.", "code": "VALIDATION_ERROR"}), 400
-
-    required_fields = ["transport_mode", "km_per_day", "electricity_units", "diet_type", "waste_kg_per_week"]
-    for field in required_fields:
-        if field not in data:
-            return jsonify({"error": f"Required field '{field}' is missing.", "code": "VALIDATION_ERROR"}), 400
-
-    transport_mode = data.get("transport_mode")
-    diet_type = data.get("diet_type")
-    km_per_day = data.get("km_per_day")
-    electricity_units = data.get("electricity_units")
-    waste_kg_per_week = data.get("waste_kg_per_week")
-
-    # Enums validation
-    if transport_mode not in CALC_CONFIG["TRANSPORT"]:
-        return jsonify({"error": f"Invalid transport mode. Must be one of: {list(CALC_CONFIG['TRANSPORT'].keys())}", "code": "VALIDATION_ERROR"}), 400
-    if diet_type not in CALC_CONFIG["DIET"]:
-        return jsonify({"error": f"Invalid diet type. Must be one of: {list(CALC_CONFIG['DIET'].keys())}", "code": "VALIDATION_ERROR"}), 400
-
-    # Number type and bounds validation
-    if not isinstance(km_per_day, (int, float)) or km_per_day < 0:
-        return jsonify({"error": "km_per_day must be a number greater than or equal to 0.", "code": "VALIDATION_ERROR"}), 400
-    if not isinstance(electricity_units, (int, float)) or electricity_units < 0:
-        return jsonify({"error": "electricity_units must be a number greater than or equal to 0.", "code": "VALIDATION_ERROR"}), 400
-    if not isinstance(waste_kg_per_week, (int, float)) or waste_kg_per_week < 0:
-        return jsonify({"error": "waste_kg_per_week must be a number greater than or equal to 0.", "code": "VALIDATION_ERROR"}), 400
+    val_data, err = validate_calculate_data(data, CALC_CONFIG)
+    if err:
+        return jsonify({"error": err, "code": "VALIDATION_ERROR"}), 400
 
     try:
-        breakdown = cached_calculate(
-            transport_mode,
-            km_per_day,
-            electricity_units,
-            diet_type,
-            waste_kg_per_week
-        )
-        recommendations = get_recommendations(breakdown)
-        return jsonify({
-            "breakdown": breakdown,
-            "recommendations": recommendations
-        })
+        result = process_calculation(val_data)
+        return jsonify(result)
     except Exception as e:
         return jsonify({"error": f"Calculation error: {str(e)}", "code": "SERVER_ERROR"}), 500
 
 
-@app.route("/chat", methods=["POST"])
-def chat():
-    """
-    JSON API chat route representing the CarbonWise conversational helper.
+def check_cache(cache_key: str, now: float) -> str | None:
+    """Checks the in-memory cache for a valid non-expired reply.
 
-    Accepts POST JSON payload:
-        {
-            "message": str,
-            "history": list,             # optional array of past conversation dicts
-            "footprint_data": dict/None  # optional current calculated emission values
-        }
+    Args:
+        cache_key (str): The unique cache key.
+        now (float): Current timestamp.
 
     Returns:
-        JSON response with the assistant's reply text, or appropriate status error codes.
+        str or None: Cached reply if valid, otherwise None.
     """
-    # 1. Rate Limiting Check
-    ip = request.remote_addr or "127.0.0.1"
-    if not check_rate_limit(ip):
-        return jsonify({"error": "Too many requests. Please try again after a minute.", "code": "RATE_LIMIT_EXCEEDED"}), 429
-
-    # 2. Payload Extraction
-    data = request.get_json(silent=True) or {}
-    message = data.get("message")
-    history = data.get("history", [])
-    footprint_data = data.get("footprint_data")
-
-    # 3. Message Sanitization & Length Check
-    if not isinstance(message, str):
-        return jsonify({"error": "Message parameter must be a string.", "code": "VALIDATION_ERROR"}), 400
-    
-    message = message.strip()
-    if not message:
-        return jsonify({"error": "Message query cannot be empty.", "code": "VALIDATION_ERROR"}), 400
-        
-    if len(message) > CONFIG["MAX_MESSAGE_LENGTH"]:
-        return jsonify({
-            "error": f"Message exceeds maximum permitted length of {CONFIG['MAX_MESSAGE_LENGTH']} characters.",
-            "code": "VALIDATION_ERROR"
-        }), 400
-
-    # 4. Read Cache
-    cache_key = get_cache_key(message, footprint_data)
-    now = time.time()
     if cache_key in CACHE:
         entry = CACHE[cache_key]
         if now < entry["expiry"]:
-            return jsonify({"reply": entry["reply"]})
-        else:
-            del CACHE[cache_key]
+            return entry["reply"]
+        del CACHE[cache_key]
+    return None
 
-    # 5. Build full system instructions including user context
-    if footprint_data and isinstance(footprint_data, dict):
-        fp_context = (
-            f"User's footprint data: Transport={footprint_data.get('transport', 0):.1f}kg, "
-            f"Electricity={footprint_data.get('electricity', 0):.1f}kg, "
-            f"Diet={footprint_data.get('diet', 0):.1f}kg, "
-            f"Waste={footprint_data.get('waste', 0):.1f}kg, "
-            f"Total={footprint_data.get('total', 0):.1f}kg CO2/month, "
-            f"Category={footprint_data.get('category', 'Unknown')}"
-        )
-        full_system_prompt = f"{fp_context}\n\n{SYSTEM_PROMPT}"
-    else:
-        full_system_prompt = SYSTEM_PROMPT
 
-    # 6. Format dialogue history into Gemini parts schema
-    contents = []
-    history_limit = history[-CONFIG["MAX_HISTORY_LENGTH"]:] if history else []
-    for h in history_limit:
-        role = "model" if h.get("role") in ["assistant", "model"] else "user"
-        text = h.get("text") or h.get("content") or ""
-        contents.append({
-            "role": role,
-            "parts": [{"text": text}]
-        })
-    
-    # Append current message
-    contents.append({
-        "role": "user",
-        "parts": [{"text": message}]
-    })
+def update_cache(cache_key: str, reply: str, expiry_time: float) -> None:
+    """Updates the in-memory cache with a new reply and expiration time.
 
-    # 7. Contact Gemini Service
-    if not GEMINI_API_KEY:
-        return jsonify({"error": "Gemini API key is not configured on the server.", "code": "API_KEY_MISSING"}), 500
+    Args:
+        cache_key (str): The unique cache key.
+        reply (str): The text response to cache.
+        expiry_time (float): Expiration timestamp.
 
-    api_url = f"https://generativelanguage.googleapis.com/v1beta/models/{CONFIG['MODEL']}:generateContent?key={GEMINI_API_KEY}"
-    payload = {
-        "contents": contents,
-        "systemInstruction": {
-            "parts": [{"text": full_system_prompt}]
-        },
-        "generationConfig": {
-            "maxOutputTokens": CONFIG["MAX_TOKENS"]
-        }
-    }
+    Returns:
+        None
+    """
+    CACHE[cache_key] = {"reply": reply, "expiry": expiry_time}
 
-    try:
-        response = requests.post(api_url, json=payload, timeout=15)
-        if response.status_code != 200:
-            return jsonify({
-                "error": f"API request failed with code {response.status_code}: {response.text}",
-                "code": "API_ERROR"
-            }), response.status_code
-        
-        res_json = response.json()
-        candidates = res_json.get("candidates", [])
-        if not candidates:
-            return jsonify({"error": "No response options generated by Gemini API.", "code": "API_ERROR"}), 502
 
-        parts = candidates[0].get("content", {}).get("parts", [])
-        if not parts:
-            return jsonify({"error": "Empty text response from Gemini API.", "code": "API_ERROR"}), 502
+def handle_api_exception(e: Exception) -> Response:
+    """Translates Gemini API/network exceptions into appropriate HTTP responses.
 
-        reply = parts[0].get("text", "")
+    Args:
+        e (Exception): The caught exception.
 
-        # 8. Cache response entry
-        CACHE[cache_key] = {
-            "reply": reply,
-            "expiry": now + CONFIG["CACHE_TTL"]
-        }
-
-        return jsonify({"reply": reply})
-
-    except requests.exceptions.Timeout:
+    Returns:
+        Response: Flask JSON response.
+    """
+    if isinstance(e, ValueError):
+        err_msg = str(e)
+        code = "API_KEY_MISSING" if "API key" in err_msg else "API_ERROR"
+        status = 500 if code == "API_KEY_MISSING" else 502
+        return jsonify({"error": err_msg, "code": code}), status
+    if isinstance(e, requests.exceptions.Timeout):
         return jsonify({"error": "Connection to the chatbot service timed out.", "code": "TIMEOUT"}), 504
-    except requests.exceptions.RequestException as e:
+    if isinstance(e, requests.exceptions.RequestException):
         return jsonify({"error": f"Network exception: {str(e)}", "code": "API_ERROR"}), 502
+    return jsonify({"error": f"Internal chatbot service error: {str(e)}", "code": "SERVER_ERROR"}), 500
+
+
+def fetch_chat_reply(
+    contents: list, system_prompt: str
+) -> Response | str:
+    """Contacts Gemini API and handles exceptions or returns reply.
+
+    Args:
+        contents (list): Gemini formatted history.
+        system_prompt (str): Configured system prompt.
+
+    Returns:
+        Response or str: Flask Response on error, or string reply.
+    """
+    try:
+        return call_gemini_api(
+            model=CONFIG["MODEL"],
+            api_key=GEMINI_API_KEY,
+            contents=contents,
+            system_prompt=system_prompt,
+            max_tokens=CONFIG["MAX_TOKENS"]
+        )
     except Exception as e:
-        return jsonify({"error": f"Internal chatbot service error: {str(e)}", "code": "SERVER_ERROR"}), 500
+        return handle_api_exception(e)
+
+
+def perform_api_and_cache(
+    cache_key: str, contents: list, sys_prompt: str, now: float
+) -> Response:
+    """Executes the API request, handles response caching and error logic.
+
+    Args:
+        cache_key (str): Cache key.
+        contents (list): Gemini formatted history.
+        sys_prompt (str): System prompt.
+        now (float): Current timestamp.
+
+    Returns:
+        Response: Flask JSON response.
+    """
+    res_or_str = fetch_chat_reply(contents, sys_prompt)
+    if isinstance(res_or_str, Response):
+        return res_or_str
+
+    update_cache(cache_key, res_or_str, now + CONFIG["CACHE_TTL"])
+    return jsonify({"reply": res_or_str})
+
+
+def handle_chat_session(
+    msg: str, hist: list, fp_data: dict | None
+) -> Response:
+    """Processes validation details, checks cache, and invokes API response flow.
+
+    Args:
+        msg (str): Sanitized user message.
+        hist (list): Conversation history.
+        fp_data (dict or None): User footprint data.
+
+    Returns:
+        Response: Flask JSON response.
+    """
+    cache_key = get_cache_key(msg, fp_data)
+    now = time.time()
+    cached = check_cache(cache_key, now)
+    if cached:
+        return jsonify({"reply": cached})
+
+    sys_prompt = format_system_prompt(fp_data, SYSTEM_PROMPT)
+    contents = format_gemini_contents(msg, hist, CONFIG["MAX_HISTORY_LENGTH"])
+    return perform_api_and_cache(cache_key, contents, sys_prompt, now)
+
+
+@app.route("/chat", methods=["POST"])
+def chat() -> Response:
+    """JSON API chat route representing the CarbonWise conversational helper.
+
+    Args:
+        None
+
+    Returns:
+        Response: JSON response with the assistant's reply text, or error codes.
+    """
+    ip = request.remote_addr or "127.0.0.1"
+    if not check_rate_limit(ip, RATE_LIMIT_TRACKER, CONFIG["RATE_LIMIT_WINDOW"], CONFIG["RATE_LIMIT_REQUESTS"]):
+        return jsonify({
+            "error": "Too many requests. Please try again after a minute.",
+            "code": "RATE_LIMIT_EXCEEDED"
+        }), 429
+
+    data = request.get_json(silent=True)
+    validation_res, error_msg = validate_chat_data(data, CONFIG["MAX_MESSAGE_LENGTH"])
+    if error_msg:
+        return jsonify({"error": error_msg, "code": "VALIDATION_ERROR"}), 400
+
+    message, history, footprint_data = validation_res
+    return handle_chat_session(message, history, footprint_data)
 
 
 if __name__ == "__main__":
