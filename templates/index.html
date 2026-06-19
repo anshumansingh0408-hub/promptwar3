@@ -404,7 +404,7 @@
                 <!-- Share Preview Box -->
                 <div class="bg-paper border border-mint/10 rounded-xl p-3.5 text-left text-xxs font-bold text-forest font-mono select-none opacity-80 shadow-inner max-w-md mx-auto">
                     <span class="text-gray-400 uppercase tracking-widest block mb-1 text-[9px]">Preview:</span>
-                    <span id="share-preview-text">My carbon footprint is 0.0 kg CO2/month. Calculate yours at http://localhost:8080/</span>
+                    <span id="share-preview-text">My carbon footprint is 0.0 kg CO2/month. Calculate yours at <span class="share-url-placeholder"></span></span>
                 </div>
 
                 <div class="flex items-center gap-2 bg-paper border border-mint/20 p-2.5 rounded-xl max-w-md mx-auto">
@@ -739,7 +739,7 @@
         });
 
         // Share text and preview generation
-        const shareText = `My carbon footprint is ${footprint.total.toFixed(1)} kg CO2/month (${footprint.category} footprint). Calculate yours at http://localhost:8080/`;
+        const shareText = `My carbon footprint is ${footprint.total.toFixed(1)} kg CO2/month (${footprint.category} footprint). Calculate yours at ${window.location.origin}/`;
         document.getElementById("share-text-input").value = shareText;
         document.getElementById("share-preview-text").innerText = shareText;
 
@@ -809,6 +809,12 @@
 
     // Page load handler to check sessionStorage
     window.addEventListener("DOMContentLoaded", () => {
+        // Update URL placeholders dynamically
+        document.querySelectorAll('.share-url-placeholder').forEach(el => {
+            el.innerText = window.location.origin + '/';
+        });
+        document.getElementById("share-text-input").value = `My carbon footprint is 0.0 kg CO2/month. Calculate yours at ${window.location.origin}/`;
+
         const saved = sessionStorage.getItem('carbonFootprint');
         if (saved) {
             try {
